@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto y Apadrinamiento | Huellas a Casa</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo-contenedor" onclick="window.location.href='../index.html'">
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M30,65 C30,52 40,42 50,42 C60,42 70,52 70,65 C70,75 60,82 50,82 C40,82 30,75 30,65 Z" fill="var(--color-background)" />
+                    <circle cx="25" cy="38" r="9" fill="var(--color-background)" />
+                    <circle cx="42" cy="22" r="9" fill="var(--color-background)" />
+                    <circle cx="58" cy="22" r="9" fill="var(--color-background)" />
+                    <circle cx="75" cy="38" r="9" fill="var(--color-background)" />
+                </svg>
+                <span class="logo-texto">Huellas a Casa</span>
+            </div>
+            <ul class="menu">
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="mestizos.html">Mestizos y Rescatados</a></li>
+                <li><a href="raza.html">Perros de Raza</a></li>
+                <li><a href="contacto.html" class="active">Contacto</a></li>
+            </ul>
+            <div class="cesta-icono">
+                🛒 <span id="contador-cesta">0</span> Cesta
+            </div>
+        </nav>
+    </header>
+
+    <main class="contenedor-contacto">
+        <section class="caja-formulario">
+            <h2>Finaliza tu Apadrinamiento</h2>
+            <p>Déjanos tus datos y nos pondremos en contacto contigo para coordinar la adopción o apadrinamiento.</p>
+            
+            <form id="formulario-adopcion" novalidate>
+                <div class="grupo-input">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" placeholder="Ej. Juan Pérez">
+                    <span class="mensaje-error" id="error-nombre"></span>
+                </div>
+
+                <div class="grupo-input">
+                    <label for="correo">Correo Electrónico</label>
+                    <input type="email" id="correo" placeholder="ejemplo@correo.com">
+                    <span class="mensaje-error" id="error-correo"></span>
+                </div>
+
+                <div class="grupo-input">
+                    <label for="telefono">Teléfono (9 dígitos)</label>
+                    <input type="tel" id="telefono" placeholder="Ej. 987654321">
+                    <span class="mensaje-error" id="error-telefono"></span>
+                </div>
+
+                <button type="submit" class="btn-agregar btn-enviar">Enviar Solicitud</button>
+            </form>
+        </section>
+    </main>
+
+    <div id="modal-cesta" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar-modal" id="btn-cerrar-modal">&times;</span>
+            <h2>🐾 Mi Cesta de Apadrinamiento</h2>
+            <div id="items-cesta"></div>
+            <div class="total-cesta">
+                <h3>Total a Aportar: S/ <span id="precio-total">0.00</span></h3>
+            </div>
+            <button id="btn-confirmar-cesta" class="btn-agregar" onclick="window.location.href='contacto.html'">Confirmar Apadrinamiento</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Huellas a Casa. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../js/app.js"></script>
+</body>
+</html>
