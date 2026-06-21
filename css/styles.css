@@ -1,613 +1,76 @@
-/* =========================================
-   1. VARIABLES Y CONFIGURACIÓN BASE
-   ========================================= */
-/* :root define variables globales (Custom Properties). 
-   Esto es crucial porque permite mantener una paleta de colores uniforme y cambiarla fácilmente desde un solo lugar. 
-   La rúbrica exige explícitamente el uso de variables CSS. */
+/*definimos colores temáticos */
 :root {
-    --color-primary: #f8950b; /* Naranja cálido */
-    --color-secondary: #2EC4B6; /* Verde azulado amigable */
-    --color-background: #f3f0ea; /* Blanco hueso */
-    --color-text: #011627; /* Azul oscuro */
-    --color-error: #E71D36; /* Rojo para validaciones futuras */
-    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* El selector universal (*) aplica el "Reset CSS".
-   Elimina los márgenes y paddings que los navegadores agregan por defecto.
-   box-sizing: border-box asegura que el padding no aumente el ancho total de los elementos. */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    --dorado-golden: #F5B041;       
+    --naranja-suave: #FAD7A1;       
+    --naranja-oscuro: #D35400;      
+    --color-texto: #4A2311;         
+    --fondo-sitio: #FEF9E7;         
 }
 
 body {
-    font-family: var(--fuente-principal);
-    background-color: var(--color-background);
-    color: var(--color-text);
-    line-height: 1.6;
+    background-color: var(--fondo-sitio);
+    color: var(--color-texto);
 }
 
-/* =========================================
-   2. NAVEGACIÓN Y HEADER (Flexbox)
-   ========================================= */
-header {
-    background-color: var(--color-primary);
-    position: sticky; /* Mantiene el header pegado en la parte superior al hacer scroll */
-    top: 0;
-    z-index: 1000; /* Asegura que el header siempre esté por encima de otros elementos */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+/* Le damos un color bonito a la barra de navegación */
+.navbar {
+    background-color: var(--dorado-golden) !important;
 }
 
-nav {
-    display: flex; /* Activa Flexbox para distribuir los elementos horizontalmente */
-    justify-content: space-between; /* Separa el logo, el menú y el carrito al máximo */
-    align-items: center; /* Centra los elementos verticalmente dentro del nav */
-    padding: 1rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto; /* Centra el nav en pantallas muy grandes */
-}
-
-/* =========================================
-   3. LOGOTIPO Y ANIMACIONES (@keyframes / transition)
-   ========================================= */
-.logo-contenedor {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-}
-
-.logo-svg {
-    width: 40px;
-    height: 40px;
-    /* transition permite que el cambio de tamaño y rotación sea suave, no instantáneo.
-       Es un requisito de la rúbrica incluir transiciones. */
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-}
-
-/* El pseudo-elemento :hover aplica el efecto cuando el mouse pasa por encima */
-.logo-contenedor:hover .logo-svg {
-    transform: scale(1.15) rotate(-15deg); /* Agranda el logo un 15% y lo rota levemente */
-}
-
-.logo-texto {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: white;
-    letter-spacing: 0.5px;
-}
-
-/* =========================================
-   4. MENÚ Y CESTA
-   ========================================= */
-.menu {
-    list-style: none; /* Quita las viñetas por defecto de las listas <ul> */
-    display: flex;
-    gap: 1.5rem; /* Espacio entre cada enlace del menú */
-}
-
-.menu a {
-    text-decoration: none; /* Quita el subrayado de los enlaces <a> */
-    color: white;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.menu a:hover, .menu a.active {
-    color: var(--color-text);
-    font-weight: bold;
-}
-
-.cesta-icono {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.3s ease;
-}
-
-.cesta-icono:hover {
-    transform: scale(1.05);
-    background-color: #f0f0f0;
-}
-
-#contador-cesta {
-    background-color: var(--color-secondary);
-    color: white;
-    padding: 0.1rem 0.5rem;
-    border-radius: 50%;
-    margin-right: 5px;
-}
-
-/* =========================================
-   5. BANNER PRINCIPAL (Centrado)
-   ========================================= */
-.banner-home {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 6rem 2rem;
-    /* Usa una imagen de fondo con un gradiente oscuro superpuesto para que el texto blanco sea legible */
-    background: linear-gradient(rgba(1, 22, 39, 0.6), rgba(1, 22, 39, 0.6)), url('../img/banner-perritos.jpg') no-repeat center center/cover;
-    color: white;
-    min-height: 400px;
-}
-
-.banner-home h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    max-width: 800px;
-    animation: fadeInDown 0.8s ease-out; /* Llama a la animación definida abajo */
-}
-
-.banner-home p {
-    font-size: 1.3rem;
-    max-width: 600px;
-    animation: fadeInUp 0.8s ease-out;
-}
-
-/* Animaciones del Banner (Requisito de la rúbrica) */
-/* @keyframes define los estados de la animación desde un punto inicial (from) a un punto final (to) */
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================
-   6. SECCIÓN PRESENTACIÓN
-   ========================================= */
-.presentacion {
-    padding: 5rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.contenido-nosotros {
-    max-width: 800px;
-    margin: 0 auto 4rem auto;
-}
-
-.contenido-nosotros h2 {
-    color: var(--color-primary);
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-}
-
-/* ::after crea un elemento decorativo virtual (la línea de subrayado) sin ensuciar el HTML */
-.contenido-nosotros h2::after {
-    content: '';
-    display: block;
-    width: 60px;
-    height: 4px;
-    background-color: var(--color-secondary);
-    margin: 0.5rem auto 0 auto;
-    border-radius: 2px;
-}
-
-.contenido-nosotros p {
-    font-size: 1.2rem;
-    color: var(--color-text);
-}
-
-.valores {
-    display: flex;
-    justify-content: center;
-    gap: 2.5rem;
-    flex-wrap: wrap; /* Permite que las tarjetas pasen a la siguiente línea si no hay espacio */
-}
-
-.valor-card {
-    background-color: white;
-    padding: 2.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(1, 22, 39, 0.05);
-    max-width: 320px;
-    text-align: center;
-    border-top: 4px solid var(--color-secondary);
-    transition: transform 0.3s ease;
-}
-
-.valor-card:hover {
-    transform: translateY(-5px);
-}
-
-.valor-card h3 {
-    color: var(--color-text);
-    margin-bottom: 1rem;
-    font-size: 1.4rem;
-}
-
-/* =========================================
-   7. CATÁLOGO DE PERRITOS (CSS Grid)
-   ========================================= */
-.titulo-seccion {
-    text-align: center;
-    padding: 3rem 2rem 1rem 2rem;
-}
-
-.titulo-seccion h2 {
-    color: var(--color-primary);
-    font-size: 2.5rem;
-}
-
-/* Esto es fundamental para la rúbrica: CSS Grid responsivo automático */
-.contenedor-perritos {
-    display: grid;
-    /* repeat(auto-fit, minmax(280px, 1fr)) crea tantas columnas como quepan.
-       Cada columna medirá mínimo 280px, y si sobra espacio, se repartirá equitativamente (1fr). */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.tarjeta-perrito {
-    display: flex;
-    flex-direction: column; /* Apila imagen, textos y botón verticalmente */
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    overflow: hidden; /* Evita que la imagen se salga de los bordes redondeados */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.tarjeta-perrito:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-}
-
-.tarjeta-perrito img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover; /* Evita que la imagen se deforme; la recorta para llenar el espacio */
-}
-
-.info-perrito {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Hace que esta sección ocupe todo el espacio disponible */
-}
-
-.info-perrito h3 {
-    margin: 0 0 0.5rem 0;
-    color: var(--color-primary);
-    font-size: 1.5rem;
-}
-
-.info-perrito p {
-    margin-bottom: 1rem;
-    color: #555;
-}
-
-.precio {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--color-text);
-    margin-top: auto; /* Empuja el precio (y el botón de abajo) al final de la tarjeta */
-    margin-bottom: 1rem;
-}
-
-.btn-agregar {
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.2s ease;
-}
-
-.btn-agregar:hover {
-    background-color: #e68a19;
-}
-
-/* =========================================
-   8. FOOTER
-   ========================================= */
-footer {
-    background-color: var(--color-text);
-    color: white;
-    text-align: center;
-    padding: 2rem;
-    margin-top: 3rem;
-}
-
-/* =========================================
-   9. MEDIA QUERIES (Responsividad obligatoria)
-   ========================================= */
-/* Requisito de la rúbrica: Las media queries aplican estilos diferentes según el tamaño de la pantalla */
-
-/* Pantallas de Tablet (768px o menos) */
-@media screen and (max-width: 768px) {
-    nav {
-        flex-direction: column; /* Cambia el menú de horizontal a vertical */
-        gap: 1rem;
-    }
+/* La rúbrica pide que el banner del Home tenga una animación */
+.bg-white {
+    /* Le cambiamos el fondo blanco de Bootstrap por nuestro naranja suave */
+    background-color: var(--naranja-suave) !important; 
     
-    .menu {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+    /* Llamamos a la animación que creamos abajo. Dura 1.5 segundos */
+    animation: entradaBanner 1.5s ease-out;
+}
 
-    .banner-home h1 {
-        font-size: 2.5rem; /* Reduce el tamaño de fuente en pantallas más pequeñas */
+/* Creamos los pasos de la animación (keyframes) */
+@keyframes entradaBanner {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px); /* Empieza un poco más arriba y transparente */
     }
-
-    .contenido-nosotros h2 {
-        font-size: 2rem;
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Termina en su posición normal */
     }
 }
 
-/* Pantallas de Móvil (480px o menos) */
-@media screen and (max-width: 480px) {
-    .menu {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        gap: 0.5rem;
-    }
-
-    .banner-home {
-        padding: 4rem 1rem;
-    }
-
-    .banner-home h1 {
-        font-size: 2rem;
-    }
-
-    .presentacion {
-        padding: 3rem 1rem;
-    }
-
-    .tarjeta-perrito img {
-        height: 200px;
-    }
+/* Esto cubre el requisito de tener "al menos 2 animaciones/transiciones" */
+.card {
+    /* Preparamos la tarjeta para que el cambio de posición sea suave */
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid var(--naranja-suave);
 }
 
-/* =========================================
-   10. VENTANA MODAL DE LA CESTA
-   ========================================= */
-.modal {
-    display: none; /* Oculto por defecto. JS le añadirá la clase .mostrar para verla */
-    position: fixed; /* Cubre toda la pantalla y no se mueve al hacer scroll */
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(1, 22, 39, 0.6); /* Fondo oscuro translúcido */
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
+/* Cuando el usuario pasa el mouse sobre la tarjeta del perrito */
+.card:hover {
+    transform: translateY(-10px); /* La tarjeta "salta" un poquito hacia arriba */
+    box-shadow: 0px 10px 15px rgba(211, 84, 0, 0.3) !important; /* Sombra naranja */
 }
 
-/* Clase que se añade con JS para mostrar el modal */
-.modal.mostrar {
-    display: flex; 
+/* Modificamos los botones primarios para que usen nuestro color */
+.btn-primary {
+    background-color: var(--naranja-oscuro);
+    border-color: var(--naranja-oscuro);
 }
 
-.modal-contenido {
-    background-color: white;
-    padding: 2.5rem 2rem;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 550px;
-    position: relative;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.btn-primary:hover {
+    background-color: var(--dorado-golden);
+    border-color: var(--naranja-oscuro);
+    color: black;
 }
 
-/* Animación de entrada de la modal */
-@keyframes modalFadeIn {
-    from { transform: translateY(-40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.cerrar-modal {
-    position: absolute; /* Permite posicionar la 'X' en la esquina superior derecha */
-    top: 15px;
-    right: 20px;
-    font-size: 2.2rem;
+.btn-success {
+    background-color: var(--dorado-golden);
+    border-color: var(--dorado-golden);
+    color: black;
     font-weight: bold;
-    cursor: pointer;
-    color: #aaa;
-    transition: color 0.2s ease;
 }
 
-.cerrar-modal:hover {
-    color: var(--color-error);
-}
-
-.modal-contenido h2 {
-    color: var(--color-text);
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 0.5rem;
-}
-
-/* Filas de perritos dentro de la cesta (Usando Flexbox) */
-.item-cesta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0;
-    border-bottom: 1px solid #eee;
-    gap: 1rem;
-}
-
-.item-cesta-row img {
-    width: 65px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.item-cesta-info {
-    flex-grow: 1; /* Permite que el texto ocupe el espacio sobrante entre la imagen y los controles */
-}
-
-.item-cesta-info h4 {
-    color: var(--color-text);
-    font-size: 1.1rem;
-    margin-bottom: 0.2rem;
-}
-
-.item-cesta-info p {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.item-cesta-controles {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-/* Selector numérico de meses de apadrinamiento */
-.item-cesta-controles input {
-    width: 55px;
-    padding: 0.4rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-weight: bold;
-    color: var(--color-text);
-}
-
-.btn-eliminar {
-    background-color: var(--color-error);
+.btn-success:hover {
+    background-color: var(--naranja-oscuro);
     color: white;
-    border: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.btn-eliminar:hover {
-    background-color: #bd1326;
-}
-
-.total-cesta {
-    text-align: right;
-    margin: 2rem 0 1.5rem 0;
-}
-
-.total-cesta h3 {
-    font-size: 1.5rem;
-    color: var(--color-text);
-}
-
-#precio-total {
-    color: var(--color-secondary);
-}
-
-#btn-confirmar-cesta {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.1rem;
-}
-
-/* =========================================
-   11. FORMULARIO DE CONTACTO / CHECKOUT
-   ========================================= */
-.contenedor-contacto {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4rem 2rem;
-    min-height: 60vh;
-}
-
-.caja-formulario {
-    background-color: white;
-    padding: 3rem 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    width: 100%;
-    max-width: 500px;
-}
-
-.caja-formulario h2 {
-    color: var(--color-primary);
-    margin-bottom: 0.5rem;
-    font-size: 2rem;
-    text-align: center;
-}
-
-.caja-formulario p {
-    text-align: center;
-    color: #666;
-    margin-bottom: 2rem;
-    font-size: 0.95rem;
-}
-
-.grupo-input {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.2rem;
-}
-
-.grupo-input label {
-    font-weight: bold;
-    color: var(--color-text);
-    margin-bottom: 0.4rem;
-}
-
-.grupo-input input {
-    padding: 0.8rem;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-family: var(--fuente-principal);
-    font-size: 1rem;
-    outline: none; /* Quita el borde azul por defecto al hacer clic */
-    transition: border-color 0.3s ease;
-}
-
-.grupo-input input:focus {
-    border-color: var(--color-primary); /* Cambia el borde al color primario al escribir */
-}
-
-/* Clases de retroalimentación visual 
-   (JS agrega estas clases dinámica mente para cumplir el Indicador 8) */
-.grupo-input input.input-error {
-    border-color: var(--color-error);
-    background-color: #fff5f5;
-}
-
-.grupo-input input.input-exito {
-    border-color: var(--color-secondary);
-}
-
-.mensaje-error {
-    color: var(--color-error);
-    font-size: 0.85rem;
-    margin-top: 0.3rem;
-    min-height: 1.2em; /* Mantiene el espacio reservado aunque el error esté vacío para evitar saltos en la pantalla */
-    display: block;
-}
-
-.btn-enviar {
-    width: 100%;
-    margin-top: 1rem;
-    font-size: 1.1rem;
 }

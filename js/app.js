@@ -1,308 +1,190 @@
-// ====================================================================
-// 1. BASE DE DATOS LOCAL (Requisito: Array de objetos JavaScript)
-// ====================================================================
-// Definimos nuestro catálogo aquí en lugar de hacerlo en el HTML.
-// Esto permite que el sitio sea escalable y fácil de mantener.
-const catalogoPerritos = [
-    { id: 1, nombre: "Paco", tipo: "mestizo", cuota: 50.00, imagen: "../img/paco.jpg", descripcion: "Juguetón y lleno de energía." },
-    { id: 2, nombre: "Luna", tipo: "raza", cuota: 120.00, imagen: "../img/luna.jpg", descripcion: "Labrador cariñosa y protectora." },
-    { id: 3, nombre: "Rocky", tipo: "raza", cuota: 150.00, imagen: "../img/rocky.jpg", descripcion: "Bulldog Francés ideal para departamentos." },
-    { id: 4, nombre: "Bella", tipo: "mestizo", cuota: 40.00, imagen: "../img/bella.jpg", descripcion: "Rescatada, muy dócil y obediente." },
-    { id: 5, nombre: "Max", tipo: "raza", cuota: 140.00, imagen: "../img/max.jpg", descripcion: "Pastor Alemán leal y guardián." },
-    { id: 6, nombre: "Kira", tipo: "mestizo", cuota: 60.00, imagen: "../img/kira.jpg", descripcion: "Cachorrita rescatada con mucha energía." }
+// array de perritos con la info
+var listaPerritos = [
+  { id: 1, nombre: "Max", cuota: 50, img: "img/max.jpg", cat: "pequeño", desc: "Enérgico y muy juguetón." },
+  { id: 2, nombre: "Luna", cuota: 75, img: "img/luna.jpg", cat: "grande", desc: "Tranquila y protectora." },
+  { id: 3, nombre: "Rocky", cuota: 60, img: "img/rocky.jpg", cat: "mediano", desc: "Le encanta correr en el parque." },
+  { id: 4, nombre: "Bella", cuota: 45, img: "img/bella.jpg", cat: "pequeño", desc: "Ideal para departamentos." },
+  { id: 5, nombre: "Thor", cuota: 80, img: "img/thor.jpg", cat: "grande", desc: "Un gigante muy dócil." },
+  { id: 6, nombre: "Coco", cuota: 55, img: "img/coco.jpg", cat: "mediano", desc: "Muy inteligente y fácil de entrenar." },
+  { id: 7, nombre: "Daisy", cuota: 40, img: "img/daisy.jpg", cat: "pequeño", desc: "Cariñosa y perfecta con niños." },
+  { id: 8, nombre: "Bruno", cuota: 70, img: "img/bruno.jpg", cat: "grande", desc: "Fiel compañero de aventuras." }
 ];
 
-// ====================================================================
-// 2. PERSISTENCIA DE DATOS (Requisito: Uso de localStorage)
-// ====================================================================
-// Intentamos recuperar la cesta guardada en el navegador usando getItem.
-// Usamos JSON.parse para convertir el texto plano de vuelta a un Array.
-// Si no hay nada guardado (null), inicializamos la cesta como un array vacío [].
-let cesta = JSON.parse(localStorage.getItem('cestaPerritos')) || [];
-
-// ====================================================================
-// 3. LÓGICA DE LA CESTA (Agregar, Eliminar, Actualizar y Totales)
-// ====================================================================
-
-// Actualiza el pequeño globo rojo con el número de ítems en el menú
-function actualizarContadorCesta() {
-    const contador = document.getElementById('contador-cesta');
-    if (contador) {
-        // El método reduce() suma las cantidades de todos los objetos en la cesta
-        const totalItems = cesta.reduce((acumulador, item) => acumulador + item.cantidad, 0);
-        contador.textContent = totalItems;
-    }
+// variables globales para el carrito
+let carrito = [];
+let guardado = localStorage.getItem("carritoGuardado");
+if(guardado) {
+    carrito = JSON.parse(guardado);
 }
 
-// Función que se ejecuta al darle clic a "Apadrinar" en la tarjeta
-function agregarALaCesta(id) {
-    // Buscamos el perrito en el catálogo original
-    const perritoSeleccionado = catalogoPerritos.find(p => p.id === id);
-    // Verificamos si ya existe en la cesta
-    const existe = cesta.find(item => item.id === id);
-    
-    if (existe) {
-        existe.cantidad++; // Si ya está, solo sumamos 1 mes más
-    } else {
-        // Si no está, lo agregamos clonando el objeto (...perritoSeleccionado) y asignando cantidad 1
-        cesta.push({ ...perritoSeleccionado, cantidad: 1 });
-    }
-    guardarYActualizar(); // Guardamos el cambio en la memoria del navegador
-}
+var miFormulario = document.getElementById("formulario-adopcion");
 
-// Filtra la cesta para quedarse con todos los perritos EXCEPTO el que queremos eliminar
-function eliminarDeLaCesta(id) {
-    cesta = cesta.filter(item => item.id !== id);
-    guardarYActualizar();
-    renderizarCesta(); // Redibujamos la vista de la cesta para que desaparezca visualmente
-}
-
-// Actualiza los meses (cantidad) desde el input numérico de la ventana modal
-function cambiarCantidad(id, nuevaCantidad) {
-    const cantidadNumerica = parseInt(nuevaCantidad);
-    if (cantidadNumerica < 1 || isNaN(cantidadNumerica)) return; // Evitamos números negativos o textos
-    
-    const item = cesta.find(item => item.id === id);
-    if (item) {
-        item.cantidad = cantidadNumerica;
-    }
-    guardarYActualizar();
-    renderizarCesta(); // Redibujamos para que el total (S/) se actualice al instante
-}
-
-// Función auxiliar para no repetir código: Guarda en memoria y actualiza el contador
-function guardarYActualizar() {
-    // JSON.stringify convierte el array a texto para que localStorage lo acepte
-    localStorage.setItem('cestaPerritos', JSON.stringify(cesta));
-    actualizarContadorCesta();
-}
-
-// ====================================================================
-// 4. MANIPULACIÓN DEL DOM (Generación dinámica de HTML con JS)
-// ====================================================================
-
-// Construye el HTML de lo que está dentro de la ventana modal
-function renderizarCesta() {
-    const contenedorItems = document.getElementById('items-cesta');
-    const contenedorTotal = document.getElementById('precio-total');
-    
-    if (!contenedorItems) return;
-    
-    // Si la cesta está vacía, mostramos un mensaje amigable
-    if (cesta.length === 0) {
-        contenedorItems.innerHTML = '<p style="text-align:center; padding:1rem; color:#888;">Tu cesta está vacía. ¡Adopta o apadrina un amigo!</p>';
-        if (contenedorTotal) contenedorTotal.textContent = "0.00";
-        return;
-    }
-
-    contenedorItems.innerHTML = ''; // Limpiamos el contenedor
-    let acumuladorTotal = 0; // Variable para calcular el costo total matemático
-
-    // Iteramos la cesta para construir cada fila
-    cesta.forEach(item => {
-        const subtotal = item.cuota * item.cantidad; // Multiplicamos cuota por meses
-        acumuladorTotal += subtotal; // Lo sumamos al total general
-
-        // Corrección de rutas para las imágenes según la página en la que estemos
-        let rutaImg = item.imagen;
-        if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-            rutaImg = item.imagen.replace('../', '');
+if(miFormulario != null){
+    miFormulario.addEventListener("submit", function(event){
+        // 1. Esto es CLAVE: Evita que la página se recargue sola
+        event.preventDefault(); 
+        
+        // 2. Capturamos lo que el usuario escribió
+        var nom = document.getElementById("input-nombre").value;
+        var dni = document.getElementById("input-dni").value;
+        var msj = document.getElementById("mensaje-error-form");
+        
+        // 3. Validación manual estilo estudiante
+        if(nom == ""){
+            msj.innerText = "Por favor, ingresa tu nombre completo.";
+            msj.classList.remove("d-none"); // Mostramos la alerta roja
+        } 
+        else if(dni.length != 8){
+            msj.innerText = "Error: El DNI debe tener exactamente 8 números.";
+            msj.classList.remove("d-none");
+        } 
+        else {
+            // 4. Si todo está correcto
+            msj.classList.add("d-none"); // Ocultamos el error
+            alert("¡Gracias por tu apoyo! Apadrinamiento confirmado.");
+            
+            // 5. Vaciamos el array del carrito dejándolo en 0
+            carrito = []; 
+            
+            // 6. Actualizamos visualmente para que se guarde el carrito vacío
+            actualizarCarrito(); 
+            
+            // 7. Limpiamos las cajas de texto del formulario
+            miFormulario.reset();
         }
-
-        // Creamos un nuevo elemento <div> usando createElement
-        const fila = document.createElement('div');
-        fila.classList.add('item-cesta-row'); // Le damos su clase CSS
-        // Usamos backticks (`) para inyectar variables JS dentro de HTML puro
-        fila.innerHTML = `
-            <img src="${rutaImg}" alt="${item.nombre}">
-            <div class="item-cesta-info">
-                <h4>${item.nombre}</h4>
-                <p>Cuota: S/ ${item.cuota.toFixed(2)}</p>
-            </div>
-            <div class="item-cesta-controles">
-                <label style="font-size:0.8rem; color:#666;">Meses:</label>
-                <input type="number" value="${item.cantidad}" min="1" onchange="cambiarCantidad(${item.id}, this.value)">
-                <button class="btn-eliminar" onclick="eliminarDeLaCesta(${item.id})">Quitar</button>
-            </div>
-        `;
-        contenedorItems.appendChild(fila); // Inyectamos la fila en la pantalla
-    });
-
-    if (contenedorTotal) {
-        contenedorTotal.textContent = acumuladorTotal.toFixed(2); // Mostramos total con 2 decimales
-    }
-}
-
-// Construye las tarjetas (cards) del catálogo en la página principal o de categorías
-function renderizarTarjetas(listaPerritos, contenedor) {
-    contenedor.innerHTML = '';
-    listaPerritos.forEach(perrito => {
-        let rutaImg = perrito.imagen;
-        if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-            rutaImg = perrito.imagen.replace('../', '');
-        }
-
-        const tarjeta = document.createElement('article');
-        tarjeta.classList.add('tarjeta-perrito');
-        tarjeta.innerHTML = `
-            <img src="${rutaImg}" alt="Foto de ${perrito.nombre}">
-            <div class="info-perrito">
-                <h3>${perrito.nombre}</h3>
-                <p>${perrito.descripcion}</p>
-                <p class="precio">Cuota: S/ ${perrito.cuota.toFixed(2)}</p>
-                <button class="btn-agregar" onclick="agregarALaCesta(${perrito.id})">Apadrinar</button>
-            </div>
-        `;
-        contenedor.appendChild(tarjeta);
     });
 }
 
-// ====================================================================
-// 5. CONTROLADORES Y EVENTOS INICIALES (Event Listeners)
-// ====================================================================
-
-// Esta función es el "motor de arranque". Se ejecuta cuando la página termina de cargar.
-function inicializarPaginas() {
-    // Detectamos en qué página estamos buscando los IDs de los contenedores
-    const contenedorMestizos = document.getElementById('catalogo-mestizos');
-    const contenedorRaza = document.getElementById('catalogo-raza');
+// funcion para poner los perros en el html
+function mostrarPerritos(filtro) {
+    var contenedor = document.getElementById("contenedor-perritos");
+    if(contenedor == null) return; // si no estamos en index, salir
     
-    // Capturamos los elementos de la ventana modal
-    const botonIconoCesta = document.querySelector('.cesta-icono');
-    const modal = document.getElementById('modal-cesta');
-    const botonCerrarModal = document.getElementById('btn-cerrar-modal');
-
-    actualizarContadorCesta();
-
-    // Filtramos el catálogo global usando el método filter() para mostrar solo los de la categoría actual
-    if (contenedorMestizos) {
-        const mestizos = catalogoPerritos.filter(p => p.tipo === "mestizo");
-        renderizarTarjetas(mestizos, contenedorMestizos);
-    }
-    if (contenedorRaza) {
-        const razas = catalogoPerritos.filter(p => p.tipo === "raza");
-        renderizarTarjetas(razas, contenedorRaza);
-    }
-
-    // Eventos 'click' para controlar la apertura y cierre de la ventana modal
-    if (botonIconoCesta && modal && botonCerrarModal) {
-        botonIconoCesta.addEventListener('click', () => {
-            renderizarCesta(); // Renderizamos la lista actualizada antes de mostrarla
-            modal.classList.add('mostrar');
-        });
-
-        botonCerrarModal.addEventListener('click', () => {
-            modal.classList.remove('mostrar');
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('mostrar');
+    let html = "";
+    
+    // usamos un for normal para recorrer
+    for(let i=0; i < listaPerritos.length; i++) {
+        let p = listaPerritos[i]; 
+        
+        // logica de filtro un poco repetitiva
+        if(filtro == "todos" || filtro == undefined) {
+             html += "<div class='col-md-3 mb-4'><div class='card shadow-sm'><img src='" + p.img + "' class='card-img-top'><div class='card-body'><h5 class='card-title'>" + p.nombre + "</h5><p>" + p.desc + "</p><p>S/ " + p.cuota + "</p><button class='btn btn-primary' onclick='abrirModalDetalle(" + p.id + ")'>Detalles</button> <button class='btn btn-success mt-2' onclick='agregarAlCarrito(" + p.id + ")'>Apadrinar</button></div></div></div>";
+        } else {
+            if(p.cat == filtro) {
+                 // pegamos el mismo html gigante otra vez
+                 html += "<div class='col-md-3 mb-4'><div class='card shadow-sm'><img src='" + p.img + "' class='card-img-top'><div class='card-body'><h5 class='card-title'>" + p.nombre + "</h5><p>" + p.desc + "</p><p>S/ " + p.cuota + "</p><button class='btn btn-primary' onclick='abrirModalDetalle(" + p.id + ")'>Detalles</button> <button class='btn btn-success mt-2' onclick='agregarAlCarrito(" + p.id + ")'>Apadrinar</button></div></div></div>";
             }
-        });
-
-        // Evento 'click' para redireccionar a la página de pago / contacto de forma inteligente
-        const botonConfirmar = document.getElementById('btn-confirmar-cesta');
-        if (botonConfirmar) {
-            botonConfirmar.addEventListener('click', () => {
-                if (window.location.pathname.includes('contacto.html')) {
-                    modal.classList.remove('mostrar');
-                    document.querySelector('.caja-formulario').scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-                        window.location.href = 'pages/contacto.html';
-                    } else {
-                        window.location.href = 'contacto.html';
-                    }
-                }
-            });
         }
+    }
+    contenedor.innerHTML = html;
+}
+
+// capturar clicks en los botones de filtro
+var botones = document.querySelectorAll(".btn-filtro");
+for(var j=0; j < botones.length; j++){
+    botones[j].addEventListener("click", function(e){
+        var cat = e.target.getAttribute("data-categoria");
+        mostrarPerritos(cat);
+    });
+}
+
+function abrirModalDetalle(id) {
+    let perroEncontrado = null;
+    
+    // buscar el perro a mano
+    for(let i=0; i<listaPerritos.length; i++){
+        if(listaPerritos[i].id == id){
+            perroEncontrado = listaPerritos[i];
+        }
+    }
+    
+    if(perroEncontrado != null){
+        document.getElementById("modal-titulo").innerText = perroEncontrado.nombre;
+        document.getElementById("modal-img").src = perroEncontrado.img;
+        document.getElementById("modal-desc").innerText = perroEncontrado.desc;
+        document.getElementById("modal-precio").innerText = "S/ " + perroEncontrado.cuota;
+        
+        document.getElementById("modal-btn-agregar").setAttribute("onclick", "agregarAlCarrito(" + perroEncontrado.id + ")");
+        
+        var modal = new bootstrap.Modal(document.getElementById('modalDetalle'));
+        modal.show();
     }
 }
 
-// EVENTO TIPO 1: DOMContentLoaded -> Espera a que el HTML exista antes de ejecutar JS
-document.addEventListener('DOMContentLoaded', inicializarPaginas);
+function agregarAlCarrito(id) {
+    let perroEncontrado = null;
+    for(let i=0; i<listaPerritos.length; i++){
+         if(listaPerritos[i].id == id){
+            perroEncontrado = listaPerritos[i];
+         }
+    }
 
-// ====================================================================
-// 6. VALIDACIÓN DE FORMULARIO (Indicador 8: Validación JS y Regex)
-// ====================================================================
-
-const formularioAdopcion = document.getElementById('formulario-adopcion');
-
-if (formularioAdopcion) {
-    // EVENTO TIPO 2: 'submit' -> Ocurre cuando el usuario presiona "Enviar"
-    formularioAdopcion.addEventListener('submit', function(evento) {
-        // preventDefault() es VITAL: Evita que la página se recargue y HTML5 intente validar
-        evento.preventDefault();
-
-        let formularioValido = true;
-
-        const inputNombre = document.getElementById('nombre');
-        const inputCorreo = document.getElementById('correo');
-        const inputTelefono = document.getElementById('telefono');
-
-        // Función reutilizable para pintar el input de rojo (clase 'input-error')
-        const mostrarError = (input, mensajeID, mensaje) => {
-            input.classList.remove('input-exito');
-            input.classList.add('input-error');
-            document.getElementById(mensajeID).textContent = mensaje;
-            formularioValido = false;
-        };
-
-        // Función reutilizable para pintar el input de verde (clase 'input-exito')
-        const mostrarExito = (input, mensajeID) => {
-            input.classList.remove('input-error');
-            input.classList.add('input-exito');
-            document.getElementById(mensajeID).textContent = '';
-        };
-
-        // Validación Básica: Mayor a 3 caracteres
-        if (inputNombre.value.trim().length < 3) {
-            mostrarError(inputNombre, 'error-nombre', 'El nombre debe tener al menos 3 letras.');
-        } else {
-            mostrarExito(inputNombre, 'error-nombre');
+    let yaExiste = false;
+    // verificar si ya lo agregaron antes
+    for(let x=0; x<carrito.length; x++){
+        if(carrito[x].id == id){
+            carrito[x].cantidad = carrito[x].cantidad + 1;
+            yaExiste = true;
         }
+    }
 
-        // Validación Regex: Expresión regular para estructura de correo "texto@texto.dominio"
-        const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!regexCorreo.test(inputCorreo.value.trim())) {
-            mostrarError(inputCorreo, 'error-correo', 'Ingresa un correo electrónico válido.');
-        } else {
-            mostrarExito(inputCorreo, 'error-correo');
-        }
-
-        // Validación Regex: Exactamente 9 dígitos numéricos (Para teléfonos en Perú)
-        const regexTelefono = /^[0-9]{9}$/;
-        if (!regexTelefono.test(inputTelefono.value.trim())) {
-            mostrarError(inputTelefono, 'error-telefono', 'El teléfono debe tener 9 dígitos numéricos.');
-        } else {
-            mostrarExito(inputTelefono, 'error-telefono');
-        }
-
-        // Si todas las validaciones pasaron (formularioValido sigue siendo true)
-        if (formularioValido) {
-            alert(`¡Gracias ${inputNombre.value}! Hemos recibido tu solicitud. Nos pondremos en contacto pronto.`);
-            
-            // Limpiamos los datos del sistema tras el éxito
-            cesta = []; 
-            guardarYActualizar();
-            renderizarCesta();
-            formularioAdopcion.reset(); // Vacía los inputs
-            
-            inputNombre.classList.remove('input-exito');
-            inputCorreo.classList.remove('input-exito');
-            inputTelefono.classList.remove('input-exito');
-        }
-    });
-
-    // EVENTO TIPO 3: 'input' -> Se ejecuta en tiempo real mientras el usuario escribe
-    const inputs = formularioAdopcion.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('input', () => {
-            // Borramos el borde rojo apenas el usuario empieza a corregir su error
-            input.classList.remove('input-error');
-            const mensajeId = 'error-' + input.id;
-            document.getElementById(mensajeId).textContent = '';
+    if(yaExiste == false){
+        carrito.push({
+            id: perroEncontrado.id,
+            nombre: perroEncontrado.nombre,
+            cuota: perroEncontrado.cuota,
+            cantidad: 1
         });
-    });
+    }
+
+    actualizarCarrito();
 }
+function actualizarCarrito(){
+    // 1. Guardar en localstorage para no perder datos
+    localStorage.setItem("carritoGuardado", JSON.stringify(carrito));
+    
+    // 2. Actualizar el numero rojo de arriba (esto sí funcionaba)
+    let spanContador = document.getElementById("contador-carrito");
+    if(spanContador != null){
+        let totalItems = 0;
+        for(let c=0; c<carrito.length; c++){
+            totalItems = totalItems + carrito[c].cantidad;
+        }
+        spanContador.innerText = totalItems;
+    }
+
+    // 3. (LO QUE FALTABA) Pintar los datos dentro del modal
+    var contenedorItems = document.getElementById("items-carrito");
+    var contenedorTotal = document.getElementById("total-carrito");
+    
+    // Verificamos que el modal exista en esta pagina
+    if(contenedorItems != null){
+        let htmlDelCarrito = "";
+        let sumaTotal = 0;
+
+        // Recorremos el carrito a la antigua para armar el texto
+        for(let i = 0; i < carrito.length; i++){
+            let item = carrito[i];
+            let subtotal = item.cuota * item.cantidad; // calculamos el subtotal de este perrito
+            sumaTotal = sumaTotal + subtotal;          // lo sumamos al total general
+
+            // Armamos el HTML sumando textos (estilo estudiante)
+            htmlDelCarrito += "<div class='d-flex justify-content-between mb-2 border-bottom pb-2'>";
+            htmlDelCarrito += "<span>" + item.nombre + " (x" + item.cantidad + ")</span>";
+            htmlDelCarrito += "<span>S/ " + subtotal + "</span>";
+            htmlDelCarrito += "</div>";
+        }
+
+        // Si el carrito se quedó vacío, ponemos un mensaje
+        if(carrito.length == 0){
+            htmlDelCarrito = "<p>Tu carrito está vacío.</p>";
+        }
+
+        // Finalmente, metemos todo el texto armado al HTML
+        contenedorItems.innerHTML = htmlDelCarrito;
+        contenedorTotal.innerText = "S/ " + sumaTotal;
+    }
+}
+// ejecutar al iniciar
+mostrarPerritos("todos");
+actualizarCarrito();
