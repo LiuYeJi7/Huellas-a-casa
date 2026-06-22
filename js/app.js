@@ -1,4 +1,4 @@
-// array de perritos con la info (Cumple punto B: 8 ítems, 4+ propiedades)
+// array de perritos con la info
 var listaPerritos = [
   { id: 1, nombre: "Max", cuota: 50, img: "img/max.jpg", cat: "pequeño", desc: "Enérgico y muy juguetón." },
   { id: 2, nombre: "Luna", cuota: 75, img: "img/luna.jpg", cat: "grande", desc: "Tranquila y protectora." },
@@ -7,14 +7,15 @@ var listaPerritos = [
   { id: 5, nombre: "Thor", cuota: 80, img: "img/thor.jpg", cat: "grande", desc: "Un gigante muy dócil." },
   { id: 6, nombre: "Coco", cuota: 55, img: "img/coco.jpg", cat: "mediano", desc: "Muy inteligente y fácil de entrenar." },
   { id: 7, nombre: "Daisy", cuota: 40, img: "img/daisy.jpg", cat: "pequeño", desc: "Cariñosa y perfecta con niños." },
-  { id: 8, merge: true, nombre: "Bruno", cuota: 70, img: "img/bruno.jpg", cat: "grande", desc: "Fiel compañero de aventuras." }
+  { id: 8, nombre: "Bruno", cuota: 70, img: "img/bruno.jpg", cat: "grande", desc: "Fiel compañero de aventuras." }
 ];
 
-// variables globales para el carrito (Cumple punto D: Persistencia localStorage)
+// variables globales para el carrito
 let carrito = [];
 let guardado = localStorage.getItem("carritoGuardado");
 if(guardado) {
     carrito = JSON.parse(guardado);
+
 }
 
 var miFormulario = document.getElementById("formulario-adopcion");
