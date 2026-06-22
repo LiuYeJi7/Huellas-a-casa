@@ -22,51 +22,65 @@ var miFormulario = document.getElementById("formulario-adopcion");
 
 if(miFormulario != null){
     miFormulario.addEventListener("submit", function(event){
-        event.preventDefault(); // Evita que la página se recargue solo (Manejo de eventos)
+        // Evita que la página se recargue sola
+        event.preventDefault(); 
         
+        // Capturamos lo que el usuario escribió
         var nom = document.getElementById("input-nombre").value;
         var dni = document.getElementById("input-dni").value;
         var msj = document.getElementById("mensaje-error-form");
         
-        // Validación manual requerida por rúbrica (Punto E)
-        if(nom.trim() == ""){
+        // Validación manual 
+        if(nom == ""){
             msj.innerText = "Por favor, ingresa tu nombre completo.";
-            msj.classList.remove("d-none"); 
+            msj.classList.remove("d-none"); // Mostramos la alerta roja
         } 
-        else if(dni.length != 8 || isNaN(dni)){
+        else if(dni.length != 8){
             msj.innerText = "Error: El DNI debe tener exactamente 8 números.";
             msj.classList.remove("d-none");
         } 
         else {
-            msj.classList.add("d-none"); 
+            // Si todo está correcto
+            msj.classList.add("d-none"); // Ocultamos el error
             alert("¡Gracias por tu apoyo! Apadrinamiento confirmado.");
+            
+            // Vaciamos el array del carrito dejándolo en 0
             carrito = []; 
+            
+            // Actualizamos visualmente para que se guarde el carrito vacío
             actualizarCarrito(); 
+            
+            // Limpiamos las cajas de texto del formulario
             miFormulario.reset();
         }
     });
 }
 
-// Función optimizada para mostrar perritos (Evita duplicar el código del HTML)
+// funcion para poner los perros en el html
 function mostrarPerritos(filtro) {
     var contenedor = document.getElementById("contenedor-perritos");
-    if(contenedor == null) return; 
+    if(contenedor == null) return; // si no estamos en index, salir
     
     let html = "";
     
+    // usamos un for normal para recorrer
     for(let i=0; i < listaPerritos.length; i++) {
         let p = listaPerritos[i]; 
         
-        // Si el filtro es 'todos' o coincide con la categoría del perrito, lo dibujamos
-        if(filtro == "todos" || filtro == undefined || p.cat == filtro) {
-             // Agregamos alt='' para accesibilidad (Punto G)
-             html += "<div class='col-md-3 mb-4'><div class='card shadow-sm'><img src='" + p.img + "' alt='Foto de " + p.nombre + "' class='card-img-top'><div class='card-body'><h5 class='card-title'>" + p.nombre + "</h5><p>" + p.desc + "</p><p class='fw-bold text-primary'>S/ " + p.cuota + "</p><button class='btn btn-primary btn-sm w-100' onclick='abrirModalDetalle(" + p.id + ")'>Detalles</button> <button class='btn btn-success btn-sm w-100 mt-2' onclick='agregarAlCarrito(" + p.id + ")'>Apadrinar</button></div></div></div>";
+        // logica de filtro un poco repetitiva
+        if(filtro == "todos" || filtro == undefined) {
+             html += "<div class='col-md-3 mb-4'><div class='card shadow-sm'><img src='" + p.img + "' class='card-img-top'><div class='card-body'><h5 class='card-title'>" + p.nombre + "</h5><p>" + p.desc + "</p><p>S/ " + p.cuota + "</p><button class='btn btn-primary' onclick='abrirModalDetalle(" + p.id + ")'>Detalles</button> <button class='btn btn-success mt-2' onclick='agregarAlCarrito(" + p.id + ")'>Apadrinar</button></div></div></div>";
+        } else {
+            if(p.cat == filtro) {
+                 // pegamos el mismo html gigante otra vez
+                 html += "<div class='col-md-3 mb-4'><div class='card shadow-sm'><img src='" + p.img + "' class='card-img-top'><div class='card-body'><h5 class='card-title'>" + p.nombre + "</h5><p>" + p.desc + "</p><p>S/ " + p.cuota + "</p><button class='btn btn-primary' onclick='abrirModalDetalle(" + p.id + ")'>Detalles</button> <button class='btn btn-success mt-2' onclick='agregarAlCarrito(" + p.id + ")'>Apadrinar</button></div></div></div>";
+            }
         }
     }
     contenedor.innerHTML = html;
 }
 
-// Capturar clicks en los botones de filtro (Eventos tipo Click)
+// capturar clicks en los botones de filtro
 var botones = document.querySelectorAll(".btn-filtro");
 for(var j=0; j < botones.length; j++){
     botones[j].addEventListener("click", function(e){
@@ -77,6 +91,8 @@ for(var j=0; j < botones.length; j++){
 
 function abrirModalDetalle(id) {
     let perroEncontrado = null;
+    
+    // buscar el perro a mano
     for(let i=0; i<listaPerritos.length; i++){
         if(listaPerritos[i].id == id){
             perroEncontrado = listaPerritos[i];
@@ -86,10 +102,8 @@ function abrirModalDetalle(id) {
     if(perroEncontrado != null){
         document.getElementById("modal-titulo").innerText = perroEncontrado.nombre;
         document.getElementById("modal-img").src = perroEncontrado.img;
-        document.getElementById("modal-img").alt = "Foto de " + perroEncontrado.nombre; // Accesibilidad
         document.getElementById("modal-desc").innerText = perroEncontrado.desc;
         document.getElementById("modal-precio").innerText = "S/ " + perroEncontrado.cuota;
-        
         document.getElementById("modal-btn-agregar").setAttribute("onclick", "agregarAlCarrito(" + perroEncontrado.id + ")");
         
         var modal = new bootstrap.Modal(document.getElementById('modalDetalle'));
@@ -106,6 +120,7 @@ function agregarAlCarrito(id) {
     }
 
     let yaExiste = false;
+    // verificar si ya lo agregaron antes
     for(let x=0; x<carrito.length; x++){
         if(carrito[x].id == id){
             carrito[x].cantidad = carrito[x].cantidad + 1;
@@ -124,25 +139,11 @@ function agregarAlCarrito(id) {
 
     actualizarCarrito();
 }
-
-// ¡NUEVA FUNCIÓN REQUERIDA POR LA RÚBRICA!: Eliminar del carrito
-function eliminarDelCarrito(id) {
-    for(let i=0; i<carrito.length; i++){
-        if(carrito[i].id == id){
-            if(carrito[i].cantidad > 1){
-                carrito[i].cantidad = carrito[i].cantidad - 1; // Resta uno si hay varios
-            } else {
-                carrito.splice(i, 1); // Lo borra por completo de la lista si solo queda 1
-            }
-            break;
-        }
-    }
-    actualizarCarrito();
-}
-
 function actualizarCarrito(){
+    // Guardar en localstorage para no perder datos
     localStorage.setItem("carritoGuardado", JSON.stringify(carrito));
     
+    // Actualizar el numero rojo de arriba 
     let spanContador = document.getElementById("contador-carrito");
     if(spanContador != null){
         let totalItems = 0;
@@ -152,35 +153,38 @@ function actualizarCarrito(){
         spanContador.innerText = totalItems;
     }
 
+    // Pintar los datos dentro del modal
     var contenedorItems = document.getElementById("items-carrito");
     var contenedorTotal = document.getElementById("total-carrito");
     
+    // Verificamos que el modal exista en esta pagina
     if(contenedorItems != null){
         let htmlDelCarrito = "";
         let sumaTotal = 0;
 
+        // Recorremos el carrito a la antigua para armar el texto
         for(let i = 0; i < carrito.length; i++){
             let item = carrito[i];
-            let subtotal = item.cuota * item.cantidad; 
-            sumaTotal = sumaTotal + subtotal;          
+            let subtotal = item.cuota * item.cantidad; // calculamos el subtotal de este perrito
+            sumaTotal = sumaTotal + subtotal;          // lo sumamos al total general
 
-            htmlDelCarrito += "<div class='d-flex justify-content-between align-items-center mb-2 border-bottom pb-2'>";
+            // Armamos el HTML sumando textos 
+            htmlDelCarrito += "<div class='d-flex justify-content-between mb-2 border-bottom pb-2'>";
             htmlDelCarrito += "<span>" + item.nombre + " (x" + item.cantidad + ")</span>";
-            htmlDelCarrito += "<div><span class='me-2'>S/ " + subtotal + "</span>";
-            // Añadimos el botón de eliminar físicamente aquí
-            htmlDelCarrito += "<button class='btn btn-danger btn-sm py-0px px-2' onclick='eliminarDelCarrito(" + item.id + ")'>&times;</button></div>";
+            htmlDelCarrito += "<span>S/ " + subtotal + "</span>";
             htmlDelCarrito += "</div>";
         }
 
+        // Si el carrito se quedó vacío, ponemos un mensaje
         if(carrito.length == 0){
-            htmlDelCarrito = "<p class='text-muted text-center'>Tu lista está vacía.</p>";
+            htmlDelCarrito = "<p>Tu carrito está vacío.</p>";
         }
 
+        // Finalmente, metemos todo el texto armado al HTML
         contenedorItems.innerHTML = htmlDelCarrito;
         contenedorTotal.innerText = "S/ " + sumaTotal;
     }
 }
-
-// Ejecución inicial obligatoria al abrir la página
+// ejecutar al iniciar
 mostrarPerritos("todos");
 actualizarCarrito();
