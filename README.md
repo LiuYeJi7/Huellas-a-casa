@@ -1,10 +1,15 @@
 Descripción del Negocio
 Este proyecto web es una solución de comercio electrónico adaptada a la temática de un refugio de adopción de perritos. La plataforma permite a los usuarios visualizar una sección de productos destacados, navegar por un catálogo generado dinámicamente y manejar aportes económicos a través de "cuotas de adopción" o "kits de apadrinamiento". 
 Integrantes y Aporte
+
 •	[ABEL F. TURPO VALLE]: [Descripción del aporte, ej. Maquetación semántica en HTML5 y diseño responsivo con Bootstrap 5]. 
+
 •	[NELSON AUGUSTO BUSTINZA HUAMANI y DANY DANIEL CCAMA LOPEZ]: [Descripción del aporte, ej. Estilos con CSS3, variables globales y animaciones de la marca]. 
+
 •	[ANYELA KELLY GALINDO PEÑA]: [Descripción del aporte, ej. Lógica de JavaScript para el carrito de compras y persistencia con LocalStorage]. 
+
 •	[DANTE DANIEL APARICIO ALCA]: [Descripción del aporte, ej. Inyección dinámica del catálogo y validación del formulario de checkout en JS]. 
+
 Instrucciones de Uso
 1.	Ejecución Local: Descomprime el archivo ZIP del proyecto, el cual está organizado bajo la estructura requerida de carpetas (/css, /js, /img, /pages). Abre el archivo principal index.html en tu navegador web. 
 2.	Versión en Línea: Puedes visualizar el sitio web desplegado en vivo ingresando a nuestra URL alojada en [GitHub Pages / Netlify]. 
