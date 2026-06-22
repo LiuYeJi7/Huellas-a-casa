@@ -17,7 +17,6 @@ body {
     background-color: var(--dorado-golden) !important;
 }
 
-/* La rúbrica pide que el banner del Home tenga una animación */
 .bg-white {
     /* Le cambiamos el fondo blanco de Bootstrap por nuestro naranja suave */
     background-color: var(--naranja-suave) !important; 
@@ -38,7 +37,6 @@ body {
     }
 }
 
-/* Esto cubre el requisito de tener "al menos 2 animaciones/transiciones" */
 .card {
     /* Preparamos la tarjeta para que el cambio de posición sea suave */
     transition: transform 0.3s, box-shadow 0.3s;
